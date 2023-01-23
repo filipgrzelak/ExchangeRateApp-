@@ -31,21 +31,28 @@ public class Main {
         System.out.println();
         System.out.print("Amount: ");
         String amount = scanner.next();
-        Double amountParse = Double.parseDouble(amount);
-        BigDecimal resultOfOperation = currencyService.exchangeCurrencies(currencyFrom.toUpperCase(), currencyTo.toUpperCase(), amountParse);
 
-        System.out.println("Result: " + resultOfOperation);
+        try {
+            double amountParse = Double.parseDouble(amount);
 
-        BigDecimal rate = resultOfOperation.divide(BigDecimal.valueOf(amountParse), 10, RoundingMode.FLOOR);
+            BigDecimal resultOfOperation = currencyService.exchangeCurrencies(currencyFrom.toUpperCase(), currencyTo.toUpperCase(), amountParse);
 
-        ExchangeCurrency exchangeCurrency = new ExchangeCurrency(currencyFrom,
-                currencyTo,
-                rate,
-                BigDecimal.valueOf(amountParse),
-                resultOfOperation);
+            System.out.println("Result: " + resultOfOperation);
 
-        ExchangeCurrencyDaoImpl exchangeCurrencyDao = new ExchangeCurrencyDaoImpl();
-        exchangeCurrencyDao.save(exchangeCurrency);
-        exchangeCurrencyDao.cleanUp();
+            BigDecimal rate = resultOfOperation.divide(BigDecimal.valueOf(amountParse), 6, RoundingMode.FLOOR);
+
+            ExchangeCurrency exchangeCurrency = new ExchangeCurrency(currencyFrom,
+                    currencyTo,
+                    rate,
+                    BigDecimal.valueOf(amountParse),
+                    resultOfOperation);
+
+            ExchangeCurrencyDaoImpl exchangeCurrencyDao = new ExchangeCurrencyDaoImpl();
+            exchangeCurrencyDao.save(exchangeCurrency);
+            exchangeCurrencyDao.cleanUp();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 }
